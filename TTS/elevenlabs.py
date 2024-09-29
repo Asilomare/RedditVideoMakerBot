@@ -19,8 +19,9 @@ class elevenlabs:
         else:
             voice = str(settings.config["settings"]["tts"]["elevenlabs_voice_name"]).capitalize()
 
-        audio = self.client.generate(text=text, voice=voice, model="eleven_multilingual_v1")
-        save(audio=audio, filename=filepath)
+        # audio = self.client.generate(text=text, voice=voice, model="eleven_multilingual_v1")
+        print('filepath', filepath)
+        # save(audio=audio, filename=filepath)
 
     def initialize(self):
         if settings.config["settings"]["tts"]["elevenlabs_api_key"]:
@@ -35,4 +36,5 @@ class elevenlabs:
     def randomvoice(self):
         if self.client is None:
             self.initialize()
-        return random.choice(self.client.voices.get_all().voices).voice_name
+        voices = random.choice(self.client.voices.get_all().voices)
+        return voices.name
