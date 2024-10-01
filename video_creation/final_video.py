@@ -184,6 +184,13 @@ def merge_background_audio(audio: ffmpeg, reddit_id: str):
         merged_audio = ffmpeg.filter([audio, bg_audio], "amix", duration="longest")
         return merged_audio  # Return merged audio
 
+def get_random_sound_effect():
+    sound_effects_dir = "sound_effects"
+    sound_files = [f for f in os.listdir(sound_effects_dir) if f.endswith(('.mp3', '.wav'))]
+    if not sound_files:
+        print_substep("No sound effects found in the sound_effects directory.")
+        return None
+    return os.path.join(sound_effects_dir, random.choice(sound_files))
 
 def make_final_video(
     number_of_clips: int,
@@ -257,6 +264,23 @@ def make_final_video(
     screenshot_width = int((W * 45) // 100)
     audio = ffmpeg.input(f"assets/temp/{reddit_id}/audio.mp3")
     final_audio = merge_background_audio(audio, reddit_id)
+
+    # Add sound effect overlay
+    sound_effect_path = get_random_sound_effect()
+    if sound_effect_path:
+        sound_effect = (
+            ffmpeg.input(sound_effect_path)
+            .filter('atrim', duration=2)  # Trim to 2 seconds
+            .filter('volume', 0.3)  # Adjust volume (0.3 = 30% of original volume)
+        )
+        
+        # Overlay sound effect on the main audio
+        final_audio = ffmpeg.filter(
+            [final_audio, sound_effect],
+            'amix',
+            duration='first',
+            dropout_transition=0
+        )
 
     image_clips = list()
 

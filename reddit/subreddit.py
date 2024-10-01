@@ -116,14 +116,19 @@ def get_subreddit_threads(POST_ID: str):
             f"Thread has a similarity score up to {round(similarity_score * 100)}%",
             style="bold blue",
         )
-
+    
     content["thread_url"] = threadurl
-    content["thread_title"] = submission.title
+    content["thread_title"] = submission.title.replace('AITAH', 'Am I the a-hole').replace('AITA', 'Am I the a-hole')
     content["thread_id"] = submission.id
     content["is_nsfw"] = submission.over_18
     content["comments"] = []
+    print_substep(submission.selftext)
+    if settings.config['settings']['manual_input']:
+        content['thread_post'] = open('script.txt').read()
+
     if settings.config["settings"]["storymode"]:
         if settings.config["settings"]["storymodemethod"] == 1:
+            
             content["thread_post"] = posttextparser(submission.selftext)
         else:
             content["thread_post"] = submission.selftext
