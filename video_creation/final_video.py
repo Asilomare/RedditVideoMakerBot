@@ -22,6 +22,9 @@ from utils.fonts import getheight
 from utils.thumbnail import create_thumbnail
 from utils.videos import save_data
 
+import random
+
+
 console = Console()
 
 
@@ -477,7 +480,7 @@ def make_final_video(
             try:
                 ffmpeg.output(
                     background_clip,
-                    audio,
+                    final_audio,
                     path,
                     f="mp4",
                     **{
